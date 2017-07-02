@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+
+    <title>Dumpling on head pls</title>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://rawgit.com/jaysalvat/jquery.facedetection/master/dist/jquery.facedetection.min.js"></script>
+    <script src="https://rawgit.com/eduardolundgren/tracking.js/master/build/tracking-min.js"></script>
+    <script src="https://rawgit.com/eduardolundgren/tracking.js/master/build/data/face-min.js"></script>
+
+
+
+    <style>
+        video,
+        canvas {
+            position: absolute;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>RaDumplings</h2>
+
+    <video id="video" width="600" height="600" preload autoplay loop muted></video>
+    <canvas id="canvas" width="600" height="600"></canvas>
+
+    <script>
+        window.onload = function() {
+            var video = document.getElementById('video');
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+
+            var tracker = new tracking.ObjectTracker('face');
+            tracker.setInitialScale(2);
+            tracker.setStepSize(1);
+            tracker.setEdgesDensity(0.1);
+            tracking.track('#video', tracker, {
+                camera: true
+            });
+
+            var dumpling = new Image();
+            dumpling.src = 'http://www.chirbachirba.com/wp-content/uploads/2011/06/chinese_chirbachirba.png';
+
+            tracker.on('track', function(event) {
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                event.data.forEach(function(rect) {
+
+                    var scale = rect.width / dumpling.width * .3;
+
+                    var dWidth = dumpling.width * scale;
+                    var dHeight = dumpling.height * scale;
+
+                    context.drawImage(dumpling,
+                        rect.x + (rect.width / 2) - (dWidth / 2),
+                        rect.y - (dHeight / 2),
+                        dWidth, dHeight);
+
+                    //context.strokeStyle = '#a64ceb';
+                    //context.strokeRect(rect.x, rect.y, rect.width, rect.height);
+                    // context.font = '11px Helvetica';
+                    // context.fillStyle = "#fff";
+                    // context.fillText('x: ' + rect.x + 'px', rect.x + rect.width + 5, rect.y + 11);
+                    // context.fillText('y: ' + rect.y + 'px', rect.x + rect.width + 5, rect.y + 22);
+                });
+            });
+            // var gui = new dat.GUI();
+            // gui.add(tracker, 'edgesDensity', 0.1, 0.5).step(0.01);
+            // gui.add(tracker, 'initialScale', 1.0, 10.0).step(0.1);
+            // gui.add(tracker, 'stepSize', 1, 5).step(0.1);
+        };
+    </script>
+
+</body>
+
+</html>
